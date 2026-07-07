@@ -31,6 +31,7 @@ dependencies = [
     "tiktoken>=0.7.0",
     "openai>=1.50.0",
     "python-multipart>=0.0.18",
+    "beautifulsoup4>=4.12.0",
 ]
 
 [project.optional-dependencies]
