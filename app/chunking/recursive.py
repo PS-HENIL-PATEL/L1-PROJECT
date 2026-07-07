@@ -49,7 +49,7 @@ class RecursiveCharacterChunker(BaseChunker):
         self,
         text: str,
         metadata: dict[str, Any] | None = None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> list[Chunk]:
         """Split text into chunks."""
         meta = metadata or {}
@@ -142,7 +142,7 @@ class RecursiveCharacterChunker(BaseChunker):
             # we just have to emit it as a large chunk.
 
             # If adding this split exceeds chunk_size, finish current chunk
-            if total + _len + (len(separator) if len(current_doc) > 0 else 0) > self._chunk_size:
+            if total + _len + (len(separator) if len(current_doc) > 0 else 0) > self._chunk_size:  # noqa: SIM102
                 if total > 0:
                     chunk = separator.join(current_doc)
                     if chunk:
@@ -150,9 +150,9 @@ class RecursiveCharacterChunker(BaseChunker):
 
                     # Handle overlap: keep last N elements that fit within overlap
                     while total > self._chunk_overlap or (
-                        total + _len + (len(separator) if len(current_doc) > 0 else 0) > self._chunk_size and total > 0
+                        total + _len + (len(separator) if len(current_doc) > 0 else 0) > self._chunk_size and total > 0  # noqa: E501
                     ):
-                        total -= len(current_doc[0]) + (len(separator) if len(current_doc) > 1 else 0)
+                        total -= len(current_doc[0]) + (len(separator) if len(current_doc) > 1 else 0)  # noqa: E501
                         current_doc.pop(0)
 
             current_doc.append(s)

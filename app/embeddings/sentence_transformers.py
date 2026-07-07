@@ -58,7 +58,7 @@ class SentenceTransformerEmbedding(BaseEmbeddingProvider):
     async def embed(
         self,
         texts: list[str],
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> EmbeddingResult:
         """Generate embeddings for a list of texts."""
         if not texts:

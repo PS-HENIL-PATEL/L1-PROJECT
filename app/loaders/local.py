@@ -28,10 +28,10 @@ class LocalDirectoryLoader(BaseLoader):
     """
 
     # Formats that should be read as text (UTF-8)
-    TEXT_FORMATS = {".txt", ".md", ".csv", ".json"}
+    TEXT_FORMATS = {".txt", ".md", ".csv", ".json"}  # noqa: RUF012
 
     # Formats that should be read as binary
-    BINARY_FORMATS = {".pdf", ".docx", ".png", ".jpg", ".jpeg", ".webp"}
+    BINARY_FORMATS = {".pdf", ".docx", ".png", ".jpg", ".jpeg", ".webp"}  # noqa: RUF012
 
     def __init__(self, allowed_extensions: set[str] | None = None) -> None:
         """
@@ -51,7 +51,7 @@ class LocalDirectoryLoader(BaseLoader):
         self,
         source: str | Path,
         recursive: bool = True,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> list[LoadedDocument]:
         """
         Load documents from the specified directory.

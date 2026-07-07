@@ -17,10 +17,10 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from pydantic import BaseModel
 
-from app.config.settings import Settings
+from app.config.settings import Settings  # noqa: TC001
 from app.core.dependencies import get_current_settings, get_ingestion_pipeline, get_vector_store
 from app.logging.logger import get_logger
-from app.pipelines.ingestion import DocumentIngestionPipeline
+from app.pipelines.ingestion import DocumentIngestionPipeline  # noqa: TC001
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -68,7 +68,7 @@ async def upload_document(
                 await asyncio.sleep(0.2)
 
         # Clean up unique dir
-        try:
+        try:  # noqa: SIM105
             unique_dir.rmdir()
         except OSError:
             pass
@@ -120,13 +120,13 @@ async def ingest_url(
 
         if is_youtube:
             # 2. Extract Video Title
-            video_title = soup.title.string.strip() if soup.title and soup.title.string else "Unknown YouTube Video"
+            video_title = soup.title.string.strip() if soup.title and soup.title.string else "Unknown YouTube Video"  # noqa: E501
 
             # Extract video ID
             video_id = None
             if "youtu.be" in req.url:
                 video_id = req.url.split("/")[-1].split("?")[0]
-            elif "youtube.com" in req.url:
+            elif "youtube.com" in req.url:  # noqa: SIM102
                 if "v=" in req.url:
                     video_id = req.url.split("v=")[1].split("&")[0]
 

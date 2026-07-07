@@ -31,7 +31,7 @@ class PyMuPDFParser(BaseParser):
         self,
         content: str | bytes,
         format: str,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> ParsedContent:
         """
         Parse PDF bytes into structured text.

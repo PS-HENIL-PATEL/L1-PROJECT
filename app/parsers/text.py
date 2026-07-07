@@ -27,7 +27,7 @@ class TextParser(BaseParser):
         self,
         content: str | bytes,
         format: str,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> ParsedContent:
         """
         Parse text/markdown into structured text.

@@ -50,7 +50,7 @@ class InMemoryVectorStore(BaseVectorStore):
         embeddings: list[list[float]],
         documents: list[str],
         metadatas: list[dict[str, Any]] | None = None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> None:
         """Add documents and embeddings to memory."""
         if not ids:
@@ -84,7 +84,7 @@ class InMemoryVectorStore(BaseVectorStore):
         query_embedding: list[float],
         top_k: int = 10,
         filters: dict[str, Any] | None = None,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> list[VectorSearchResult]:
         """Search for similar documents using cosine similarity."""
         if not self.embeddings:
@@ -123,7 +123,7 @@ class InMemoryVectorStore(BaseVectorStore):
 
         return top_results
 
-    async def delete(self, ids: list[str], **kwargs: Any) -> None:
+    async def delete(self, ids: list[str], **kwargs: Any) -> None:  # noqa: ARG002
         """Delete points by ID."""
         for doc_id in ids:
             if doc_id in self.ids:

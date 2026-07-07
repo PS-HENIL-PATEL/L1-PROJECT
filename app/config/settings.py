@@ -268,7 +268,7 @@ class LLMSettings(BaseSettings):
 
     # API Keys (no defaults — must be provided)
     openai_api_key: str | None = Field(default=None, description="OpenAI API key")
-    openai_base_url: str | None = Field(default=None, description="Base URL for OpenAI-compatible providers (like Groq, vLLM, etc.)")
+    openai_base_url: str | None = Field(default=None, description="Base URL for OpenAI-compatible providers (like Groq, vLLM, etc.)")  # noqa: E501
     anthropic_api_key: str | None = Field(default=None, description="Anthropic API key")
     google_api_key: str | None = Field(default=None, description="Google AI API key")
     cohere_api_key: str | None = Field(default=None, description="Cohere API key")

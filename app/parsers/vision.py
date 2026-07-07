@@ -3,7 +3,7 @@ Enterprise RAG OS — Vision Image Parser
 =========================================
 
 Extracts text from images using an OpenAI-compatible Vision API (e.g. Groq llama-3.2-90b-vision-preview).
-"""
+"""  # noqa: E501
 
 import base64
 from typing import Any
@@ -50,7 +50,7 @@ class VisionImageParser(BaseParser):
         self,
         content: str | bytes,
         format: str,
-        **kwargs: Any,
+        **kwargs: Any,  # noqa: ARG002
     ) -> ParsedContent:
         """
         Extract text from image using Vision API.
@@ -75,7 +75,7 @@ class VisionImageParser(BaseParser):
                     {
                         "role": "user",
                         "content": [
-                            {"type": "text", "text": "Extract all readable text, data, and descriptions from this image. DO NOT TRUNCATE. If the image contains a table, you MUST transcribe EVERY SINGLE ROW exactly as it appears. Do not skip any rows or data. Format it cleanly as a Markdown table. CRITICAL: Ensure every row of the table is on a NEW LINE (\\n). Do NOT put the entire table on a single line. Provide a structured, accurate, and fully complete extraction."},
+                            {"type": "text", "text": "Extract all readable text, data, and descriptions from this image. DO NOT TRUNCATE. If the image contains a table, you MUST transcribe EVERY SINGLE ROW exactly as it appears. Do not skip any rows or data. Format it cleanly as a Markdown table. CRITICAL: Ensure every row of the table is on a NEW LINE (\\n). Do NOT put the entire table on a single line. Provide a structured, accurate, and fully complete extraction."},  # noqa: E501
                             {
                                 "type": "image_url",
                                 "image_url": {
@@ -93,7 +93,7 @@ class VisionImageParser(BaseParser):
             if extracted is None:
                 extracted = ""
 
-            return ParsedContent(text=extracted.strip(), metadata={"parser": "vision_llm", "format": format})
+            return ParsedContent(text=extracted.strip(), metadata={"parser": "vision_llm", "format": format})  # noqa: E501
 
         except Exception as e:
             logger.error(f"Vision parsing failed: {e}")

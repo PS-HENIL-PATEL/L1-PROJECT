@@ -265,7 +265,7 @@ class QdrantVectorStore(BaseVectorStore):
 
                 for point in results:
                     payload = point.payload or {}
-                    source = payload.get("source") or payload.get("absolute_path") or payload.get("url") or payload.get("file_name")
+                    source = payload.get("source") or payload.get("absolute_path") or payload.get("url") or payload.get("file_name")  # noqa: E501
                     if source and source not in sources:
                         sources[source] = {
                             "source": source,

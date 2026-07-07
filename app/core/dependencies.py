@@ -62,10 +62,10 @@ def get_request_id(request: Request) -> str:
     return getattr(request.state, "request_id", "unknown")
 
 
-from app.embeddings.sentence_transformers import SentenceTransformerEmbedding
-from app.rerankers.cross_encoder import CrossEncoderReranker
-from app.vectorstores.in_memory import InMemoryVectorStore
-from app.vectorstores.qdrant import QdrantVectorStore
+from app.embeddings.sentence_transformers import SentenceTransformerEmbedding  # noqa: E402
+from app.rerankers.cross_encoder import CrossEncoderReranker  # noqa: E402
+from app.vectorstores.in_memory import InMemoryVectorStore  # noqa: E402
+from app.vectorstores.qdrant import QdrantVectorStore  # noqa: E402
 
 
 @lru_cache
