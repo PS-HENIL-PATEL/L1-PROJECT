@@ -7,10 +7,12 @@ Extracts text from images using an OpenAI-compatible Vision API (e.g. Groq llama
 
 import base64
 from typing import Any
+
 from openai import AsyncOpenAI
-from app.parsers.base import BaseParser, ParsedContent
+
 from app.config.settings import get_settings
 from app.logging.logger import get_logger
+from app.parsers.base import BaseParser, ParsedContent
 
 logger = get_logger(__name__)
 
@@ -24,13 +26,13 @@ class VisionImageParser(BaseParser):
     """
     Parser that uses an LLM Vision API to extract text from images.
     """
-    
+
     def __init__(self) -> None:
         self.settings = get_settings()
         base_url = self.settings.llm.openai_base_url
         if self.settings.llm.default_provider == "ollama":
             base_url = self.settings.llm.ollama_base_url + "/v1"
-            
+
         self.client = AsyncOpenAI(
             api_key=self.settings.llm.openai_api_key or "no-key",
             base_url=base_url,
@@ -54,13 +56,13 @@ class VisionImageParser(BaseParser):
         Extract text from image using Vision API.
         """
         logger.info(f"Parsing image format {format} with Vision LLM")
-        
+
         try:
             if isinstance(content, str):
                 content = content.encode("utf-8")
-                
+
             base64_image = encode_image(content)
-            
+
             mime_type = "image/jpeg"
             if format.lower() == "png":
                 mime_type = "image/png"
@@ -86,13 +88,13 @@ class VisionImageParser(BaseParser):
                 max_tokens=4096,
                 temperature=0.1
             )
-            
+
             extracted = response.choices[0].message.content
             if extracted is None:
                 extracted = ""
-                
+
             return ParsedContent(text=extracted.strip(), metadata={"parser": "vision_llm", "format": format})
-            
+
         except Exception as e:
             logger.error(f"Vision parsing failed: {e}")
             raise RuntimeError(f"Vision parsing failed: {e}") from e

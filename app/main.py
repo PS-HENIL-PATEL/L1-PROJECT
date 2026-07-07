@@ -120,6 +120,7 @@ def create_app() -> FastAPI:
 
     # ── Serve UI ──────────────────────────────────────────────────────────
     import os
+
     from fastapi.staticfiles import StaticFiles
 
     ui_dir = os.path.join(settings.project_root, "app", "ui")

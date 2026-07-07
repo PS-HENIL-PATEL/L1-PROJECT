@@ -10,6 +10,7 @@ Purpose:
 from __future__ import annotations
 
 from typing import Any
+
 import numpy as np
 
 from app.core.exceptions import VectorStoreError
@@ -34,13 +35,13 @@ class InMemoryVectorStore(BaseVectorStore):
     def __init__(self, collection_name: str, dimension: int) -> None:
         self.collection_name = collection_name
         self.dimension = dimension
-        
+
         # In-memory storage
         self.ids: list[str] = []
         self.embeddings: list[np.ndarray] = []
         self.documents: list[str] = []
         self.metadatas: list[dict[str, Any]] = []
-        
+
         logger.info(f"Initialized InMemoryVectorStore for collection '{collection_name}'")
 
     async def add(
@@ -70,12 +71,12 @@ class InMemoryVectorStore(BaseVectorStore):
                 self.embeddings.pop(idx)
                 self.documents.pop(idx)
                 self.metadatas.pop(idx)
-                
+
             self.ids.append(doc_id)
             self.embeddings.append(np.array(embeddings[i]))
             self.documents.append(documents[i])
             self.metadatas.append(metadatas[i])
-            
+
         logger.info(f"Added {len(ids)} points to InMemoryVectorStore")
 
     async def search(
@@ -91,7 +92,7 @@ class InMemoryVectorStore(BaseVectorStore):
 
         q_vec = np.array(query_embedding)
         results = []
-        
+
         for idx in range(len(self.ids)):
             # Basic exact match filtering
             if filters:
@@ -102,13 +103,13 @@ class InMemoryVectorStore(BaseVectorStore):
                         break
                 if skip:
                     continue
-            
+
             score = cosine_similarity(q_vec, self.embeddings[idx])
             results.append((score, idx))
-            
+
         # Sort by score descending
         results.sort(key=lambda x: x[0], reverse=True)
-        
+
         top_results = []
         for score, idx in results[:top_k]:
             top_results.append(
@@ -119,7 +120,7 @@ class InMemoryVectorStore(BaseVectorStore):
                     metadata=self.metadatas[idx]
                 )
             )
-            
+
         return top_results
 
     async def delete(self, ids: list[str], **kwargs: Any) -> None:
@@ -131,7 +132,7 @@ class InMemoryVectorStore(BaseVectorStore):
                 self.embeddings.pop(idx)
                 self.documents.pop(idx)
                 self.metadatas.pop(idx)
-        logger.info(f"Deleted points from InMemoryVectorStore")
+        logger.info("Deleted points from InMemoryVectorStore")
 
     @property
     def name(self) -> str:

@@ -25,16 +25,16 @@ async def main() -> None:
     # 1. Initialize components
     print("Initializing components...")
     loader = LocalDirectoryLoader()
-    
+
     parsers = {
         "txt": TextParser(),
         "md": TextParser(),
         "pdf": PyMuPDFParser(),
     }
-    
+
     chunker = RecursiveCharacterChunker(chunk_size=512, chunk_overlap=50)
     embedder = SentenceTransformerEmbedding(model_name="all-MiniLM-L6-v2")
-    
+
     vectorstore = QdrantVectorStore(
         collection_name="enterprise_test_collection",
         dimension=embedder.dimension,
@@ -42,7 +42,7 @@ async def main() -> None:
         port=6333,
         grpc_port=6334,
     )
-    
+
     # Wire the pipeline
     pipeline = DocumentIngestionPipeline(
         loader=loader,
@@ -51,11 +51,11 @@ async def main() -> None:
         embedder=embedder,
         vectorstore=vectorstore,
     )
-    
+
     # Create test data
     test_dir = Path("data/test_docs")
     test_dir.mkdir(parents=True, exist_ok=True)
-    
+
     test_file = test_dir / "sample.txt"
     test_file.write_text(
         "Retrieval-Augmented Generation (RAG) is an AI framework for improving the quality "
@@ -63,19 +63,19 @@ async def main() -> None:
         "It combines an information retrieval component with a text generator model.",
         encoding="utf-8"
     )
-    
+
     print("\nStarting ingestion pipeline...")
     stats = await pipeline.run(test_dir)
     print("\nIngestion Complete!")
     print("Stats:", stats)
-    
+
     # Test Retrieval
     query = "What is RAG?"
     print(f"\nSearching for: '{query}'")
-    
+
     query_vector = await embedder.embed_query(query)
     results = await vectorstore.search(query_vector, top_k=2)
-    
+
     print(f"Found {len(results)} results:")
     for i, res in enumerate(results, 1):
         print(f"\nResult {i} (Score: {res.score:.4f}):")

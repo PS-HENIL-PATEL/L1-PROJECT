@@ -11,11 +11,11 @@ import asyncio
 import shutil
 import uuid
 from typing import Any
+
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel
-
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from pydantic import BaseModel
 
 from app.config.settings import Settings
 from app.core.dependencies import get_current_settings, get_ingestion_pipeline, get_vector_store
@@ -56,7 +56,7 @@ async def upload_document(
         final_path = upload_dir / file.filename
         if final_path.exists():
             final_path.unlink(missing_ok=True)
-            
+
         # Retry logic for Windows transient file locks (WinError 5)
         for attempt in range(3):
             try:
@@ -66,7 +66,7 @@ async def upload_document(
                 if attempt == 2:
                     raise e
                 await asyncio.sleep(0.2)
-                
+
         # Clean up unique dir
         try:
             unique_dir.rmdir()
@@ -86,13 +86,13 @@ async def upload_document(
                 temp_file_path.unlink()
         except OSError:
             pass
-            
+
         try:
             if unique_dir.exists():
                 unique_dir.rmdir()
         except OSError:
             pass
-            
+
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}") from e
 
 
@@ -105,23 +105,23 @@ async def ingest_url(
     """Scrape and ingest a URL into the knowledge base."""
     if not req.url.startswith("http"):
         req.url = "https://" + req.url
-        
+
     try:
         logger.info(f"Fetching URL: {req.url}")
-        
+
         is_youtube = "youtube.com" in req.url or "youtu.be" in req.url
         text = ""
-        
+
         # 1. Always fetch the raw HTML to get the Title and Description
         res = requests.get(req.url, timeout=10)
         res.raise_for_status()
-        
+
         soup = BeautifulSoup(res.text, "html.parser")
-        
+
         if is_youtube:
             # 2. Extract Video Title
             video_title = soup.title.string.strip() if soup.title and soup.title.string else "Unknown YouTube Video"
-            
+
             # Extract video ID
             video_id = None
             if "youtu.be" in req.url:
@@ -129,7 +129,7 @@ async def ingest_url(
             elif "youtube.com" in req.url:
                 if "v=" in req.url:
                     video_id = req.url.split("v=")[1].split("&")[0]
-            
+
             transcript_text = ""
             if video_id:
                 try:
@@ -139,7 +139,7 @@ async def ingest_url(
                     logger.info(f"Successfully fetched transcript for video {video_id}")
                 except Exception as e:
                     logger.warning(f"Failed to fetch YouTube transcript: {e}")
-            
+
             if transcript_text:
                 text = f"Video Title: {video_title}\n\nTranscript:\n{transcript_text}"
             else:
@@ -147,31 +147,31 @@ async def ingest_url(
                 for script in soup(["script", "style", "nav", "footer"]):
                     script.extract()
                 text = f"Video Title: {video_title}\n\n{soup.get_text(separator='\n', strip=True)}"
-                
+
         else:
             # 3. Standard HTML Scraper
             for script in soup(["script", "style", "nav", "footer"]):
                 script.extract()
             text = soup.get_text(separator="\n", strip=True)
-        
+
         upload_dir = settings.project_root / "data" / "uploaded"
         upload_dir.mkdir(parents=True, exist_ok=True)
         unique_dir = upload_dir / str(uuid.uuid4())
         unique_dir.mkdir(parents=True, exist_ok=True)
-        
+
         import re
         filename = re.sub(r'[<>:"/\\|?*&=#+%]', '_', req.url.split("//")[-1]) + ".txt"
         temp_file_path = unique_dir / filename
-        
+
         with open(temp_file_path, "w", encoding="utf-8") as f:
             f.write(f"Source URL: {req.url}\n\n{text}")
-            
+
         stats = await pipeline.run(input=str(unique_dir), recursive=False)
-        
+
         if temp_file_path.exists():
             temp_file_path.unlink()
-        unique_dir.rmdir() 
-        
+        unique_dir.rmdir()
+
         return {
             "status": "success",
             "message": f"Successfully ingested {req.url}",
@@ -189,7 +189,6 @@ async def clear_database(
 ) -> dict[str, Any]:
     """Wipes the vector database."""
     try:
-        from qdrant_client import QdrantClient
         if hasattr(vectorstore, "client"):
             client = vectorstore.client
             await client.delete_collection(vectorstore.collection_name)

@@ -64,10 +64,10 @@ class MockVectorStore(BaseVectorStore):
     ) -> list[VectorSearchResult]:
         return [
             VectorSearchResult(
-                id="1", score=0.9, text="Result 1", metadata={"document_id": "doc1"}
+                id="1", score=0.9, content="Result 1", metadata={"document_id": "doc1"}
             ),
             VectorSearchResult(
-                id="2", score=0.8, text="Result 2", metadata={"document_id": "doc2"}
+                id="2", score=0.8, content="Result 2", metadata={"document_id": "doc2"}
             ),
         ]
 
@@ -76,6 +76,12 @@ class MockVectorStore(BaseVectorStore):
 
     async def health_check(self) -> bool:
         return True
+
+    async def count(self) -> int:
+        return 2
+
+    async def list_sources(self) -> list[dict[str, Any]]:
+        return [{"source": "doc1", "count": 1}, {"source": "doc2", "count": 1}]
 
 
 class TestVectorRetriever:

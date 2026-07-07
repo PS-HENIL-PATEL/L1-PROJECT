@@ -9,7 +9,7 @@ returns a structured response with answer, sources, and explainability.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
 

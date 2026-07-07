@@ -253,7 +253,7 @@ class QdrantVectorStore(BaseVectorStore):
         try:
             sources = {}
             offset = None
-            
+
             while True:
                 results, next_offset = await self.client.scroll(
                     collection_name=self.collection_name,
@@ -262,7 +262,7 @@ class QdrantVectorStore(BaseVectorStore):
                     with_payload=True,
                     with_vectors=False
                 )
-                
+
                 for point in results:
                     payload = point.payload or {}
                     source = payload.get("source") or payload.get("absolute_path") or payload.get("url") or payload.get("file_name")
@@ -273,11 +273,11 @@ class QdrantVectorStore(BaseVectorStore):
                             "format": payload.get("format", "unknown"),
                             "file_name": payload.get("file_name", source)
                         }
-                        
+
                 offset = next_offset
                 if offset is None:
                     break
-                    
+
             return list(sources.values())
         except Exception as e:
             logger.error("Failed to list sources", error=str(e))

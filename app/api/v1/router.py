@@ -17,10 +17,10 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
+from app.api.v1.documents import router as documents_router
 from app.api.v1.evaluate import router as evaluate_router
 from app.api.v1.query import router as query_router
 from app.api.v1.search import router as search_router
-from app.api.v1.documents import router as documents_router
 
 router = APIRouter(prefix="/api/v1", tags=["v1"])
 

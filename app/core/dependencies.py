@@ -62,16 +62,17 @@ def get_request_id(request: Request) -> str:
     return getattr(request.state, "request_id", "unknown")
 
 
-from app.vectorstores.in_memory import InMemoryVectorStore
-from app.vectorstores.qdrant import QdrantVectorStore
 from app.embeddings.sentence_transformers import SentenceTransformerEmbedding
 from app.rerankers.cross_encoder import CrossEncoderReranker
+from app.vectorstores.in_memory import InMemoryVectorStore
+from app.vectorstores.qdrant import QdrantVectorStore
+
 
 @lru_cache
 def get_vector_store() -> Any:
     """Dependency that provides the vector store singleton based on settings."""
     settings = get_settings()
-    
+
     if settings.vectorstore.provider.lower() == "qdrant":
         return QdrantVectorStore(
             collection_name=settings.vectorstore.collection_name,
@@ -79,7 +80,7 @@ def get_vector_store() -> Any:
             host=settings.vectorstore.qdrant_host,
             port=settings.vectorstore.qdrant_port,
         )
-    
+
     # Default fallback
     return InMemoryVectorStore(
         collection_name=settings.vectorstore.collection_name,
@@ -129,7 +130,7 @@ def get_llm() -> BaseLLM:
     from app.models.openai_llm import OpenAICompatibleLLM
 
     settings = get_settings()
-    
+
     # Determine the base URL
     base_url = None
     if settings.llm.openai_base_url:
@@ -185,13 +186,13 @@ def get_relevance_evaluator() -> Any:
 @lru_cache
 def get_ingestion_pipeline() -> Any:
     """Dependency that provides the Document Ingestion Pipeline."""
-    from app.pipelines.ingestion import DocumentIngestionPipeline
+    from app.chunking.recursive import RecursiveCharacterChunker
     from app.loaders.local import LocalDirectoryLoader
     from app.parsers.pdf import PyMuPDFParser
     from app.parsers.text import TextParser
     from app.parsers.vision import VisionImageParser
-    from app.chunking.recursive import RecursiveCharacterChunker
-    
+    from app.pipelines.ingestion import DocumentIngestionPipeline
+
     loader = LocalDirectoryLoader()
     parsers = {
         "pdf": PyMuPDFParser(),
@@ -207,7 +208,7 @@ def get_ingestion_pipeline() -> Any:
         chunk_size=get_settings().chunking.chunk_size,
         chunk_overlap=get_settings().chunking.chunk_overlap,
     )
-    
+
     return DocumentIngestionPipeline(
         loader=loader,
         parsers=parsers,

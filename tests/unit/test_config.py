@@ -23,7 +23,7 @@ class TestSettingsDefaults:
     """Test that settings have sensible defaults."""
 
     def test_default_app_name(self, test_settings: Settings) -> None:
-        assert test_settings.app_name == "Enterprise RAG OS"
+        assert test_settings.app_name == "Intellex"
 
     def test_default_environment(self, test_settings: Settings) -> None:
         assert test_settings.environment == Environment.DEVELOPMENT
@@ -47,7 +47,7 @@ class TestSettingsDefaults:
         assert test_settings.embedding.dimension == 384
 
     def test_default_vectorstore_provider(self, test_settings: Settings) -> None:
-        assert test_settings.vectorstore.provider == "chromadb"
+        assert test_settings.vectorstore.provider == "qdrant"
 
     def test_default_chunking_strategy(self, test_settings: Settings) -> None:
         assert test_settings.chunking.strategy == "recursive"
