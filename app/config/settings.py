@@ -190,7 +190,7 @@ class VectorStoreSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="VECTORSTORE_", extra="ignore")
 
     provider: str = Field(
-        default="chromadb",
+        default="qdrant",
         description="Vector store provider: chromadb | qdrant | faiss",
     )
     collection_name: str = Field(
