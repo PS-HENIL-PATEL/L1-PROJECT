@@ -6,6 +6,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![Intellex UI Screenshot](./docs/diagrams/intellex-ui.png)
+
 ---
 
 ## 🏗️ Architecture
