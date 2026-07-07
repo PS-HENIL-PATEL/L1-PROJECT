@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intellex OS</title>
+    <!-- Favicon / FontAwesome / Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="/style.css?v=5">
+</head>
+<body>
+    <canvas id="confetti-canvas"></canvas>
+    
+    <div class="app-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                    <div>
+                        <h1>Intellex</h1>
+                        <p class="tagline">Enterprise Edition</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-content">
+                <div class="nav-item active" data-target="chat-view" onclick="switchView('chat-view')">
+                    <i class="fa-solid fa-message"></i> Chat Interface
+                </div>
+                <div class="nav-item" data-target="docs-view" onclick="switchView('docs-view')">
+                    <i class="fa-solid fa-folder-open"></i> Documents
+                </div>
+                <div class="nav-item" data-target="obs-view" onclick="switchView('obs-view')">
+                    <i class="fa-solid fa-chart-line"></i> Observability
+                </div>
+                <div class="nav-item" data-target="access-view" onclick="switchView('access-view')">
+                    <i class="fa-solid fa-shield-halved"></i> Access Control
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <div class="status-dot green"></div>
+                    <span>System Online</span>
+                </div>
+                <div class="made-by">Made by Henil Patel</div>
+            </div>
+        </aside>
+
+        <!-- Main View Area -->
+        <div class="views-container glass-panel">
+            
+            <!-- Chat View -->
+            <main id="chat-view" class="view-panel active">
+                <header class="chat-header">
+                    <h2>Assistant</h2>
+                    <span class="model-badge">LLAMA-3 (GROQ)</span>
+                </header>
+                
+                <div class="chat-history" id="chatHistory">
+                    <div class="message assistant">
+                        <div class="avatar">AI</div>
+                        <div class="message-content">
+                            <p>Hello! I am the Enterprise RAG OS Assistant.</p>
+                            <p>I have access to the knowledge base. Ask me anything about the ingested documents.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    <form id="chatForm">
+                        <textarea id="userInput" placeholder="Ask a question..." rows="1" required></textarea>
+                        <button type="submit" id="sendBtn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </main>
+
+            <!-- Documents View -->
+            <main id="docs-view" class="view-panel">
+                <header class="chat-header">
+                    <h2>Document Management</h2>
+                </header>
+                <div class="documents-container">
+                    
+                    <div class="doc-section">
+                        <h3>Upload File / Image</h3>
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fa-solid fa-file-arrow-up" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>Drag & drop a file here</p>
+                            <p style="font-size: 0.9rem; color: #555;">(PDF, TXT, MD, PNG, JPG)</p>
+                            <input type="file" id="fileInput" style="display: none;" accept=".pdf,.txt,.md,.csv,.json,.png,.jpg,.jpeg">
+                        </div>
+                        <div id="uploadStatus" style="margin-top: 1rem; font-weight: 700;"></div>
+                    </div>
+
+                    <div class="doc-section">
+                        <h3>Ingest Web Link</h3>
+                        <div class="url-input-container">
+                            <input type="url" id="urlInput" placeholder="https://example.com/article" required>
+                            <button type="button" id="ingestUrlBtn" class="brutal-btn">Scrape URL</button>
+                        </div>
+                        <div id="urlStatus" style="margin-top: 1rem; font-weight: 700;"></div>
+                    </div>
+
+                    <div class="doc-section" style="background: #FFE2E2;">
+                        <h3>System Reset</h3>
+                        <p style="margin-bottom: 1rem;">Wipe the entire knowledge base. This action cannot be undone.</p>
+                        <button type="button" id="clearKbBtn" class="brutal-btn danger">Clear Knowledge Base</button>
+                    </div>
+
+                    <div class="doc-section">
+                        <h3>Ingested Materials</h3>
+                        <div id="materialsList" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <!-- List injected by JS -->
+                            <div style="padding: 10px; border: 2px solid #000; background: #fff;">Loading...</div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+            <!-- Observability View -->
+            <main id="obs-view" class="view-panel">
+                <header class="chat-header">
+                    <h2>Observability Dashboard</h2>
+                </header>
+                <div class="observability-container" style="padding: 2rem; overflow-y: auto; height: calc(100% - 70px);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                        <div class="chart-card glass-panel" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.2rem; font-family: 'Bricolage Grotesque', sans-serif; text-transform: uppercase;">Latency Breakdown</h3>
+                            <canvas id="latencyChart"></canvas>
+                        </div>
+                        <div class="chart-card glass-panel" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.2rem; font-family: 'Bricolage Grotesque', sans-serif; text-transform: uppercase;">Token Usage</h3>
+                            <canvas id="tokenChart"></canvas>
+                        </div>
+                        <div class="chart-card glass-panel" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem; font-size: 1.2rem; font-family: 'Bricolage Grotesque', sans-serif; text-transform: uppercase;">AI Confidence Trend</h3>
+                            <canvas id="confidenceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <!-- Access Control View -->
+            <main id="access-view" class="view-panel">
+                <header class="chat-header">
+                    <h2>Access Control</h2>
+                </header>
+                <div style="padding: 2rem; overflow-y: auto; height: calc(100% - 70px);">
+                    <div style="display: grid; gap: 2rem;">
+                        <div class="glass-panel" style="padding: 1.5rem;">
+                            <h3>API Key Management</h3>
+                            <p style="margin-bottom: 1rem;">Generate and revoke API keys for external integrations.</p>
+                            <div style="display: flex; gap: 1rem;">
+                                <input type="text" value="sk_ent_**********************" readonly style="flex: 1; padding: 0.5rem;">
+                                <button class="brutal-btn" style="padding: 0.5rem 1rem;">Regenerate</button>
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="padding: 1.5rem;">
+                            <h3>Role-Based Access (RBAC)</h3>
+                            <p style="margin-bottom: 1rem;">Manage team permissions and database access.</p>
+                            <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid #000;">
+                                        <th style="padding: 0.5rem;">User</th>
+                                        <th style="padding: 0.5rem;">Role</th>
+                                        <th style="padding: 0.5rem;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #ddd;">
+                                        <td style="padding: 0.5rem;">henil@example.com</td>
+                                        <td style="padding: 0.5rem;">Admin</td>
+                                        <td style="padding: 0.5rem; color: #00E676;">Active</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.5rem;">guest@example.com</td>
+                                        <td style="padding: 0.5rem;">Viewer</td>
+                                        <td style="padding: 0.5rem; color: #FF5D8F;">Suspended</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button class="brutal-btn" style="margin-top: 1rem;">+ Add User</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+
+        <!-- Telemetry / Insights Sidebar -->
+        <aside class="insights-panel glass-panel">
+            <div class="insights-header">
+                <h3>Telemetry</h3>
+            </div>
+            <div class="insights-content" id="insightsContent">
+                <div class="empty-state">
+                    No telemetry data yet. <br><br> Ask a question to see retrieval metrics and AI confidence scores.
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <script src="/app.js?v=9"></script>
+</body>
+</html>
